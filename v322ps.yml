@@ -1,0 +1,7 @@
+- name: Download full setup script
+  run: Invoke-WebRequest -Uri "https://gitlab.com/gitrdp124/sv2025-rdp/-/raw/main/full_setup_tail.ps1" -OutFile "setup.ps1"
+
+- name: Execute setup script
+  run: powershell -ExecutionPolicy Bypass -File setup.ps1
+  env:
+    TS_KEY: ${{ secrets.TAILSCALE_TOKEN }}
