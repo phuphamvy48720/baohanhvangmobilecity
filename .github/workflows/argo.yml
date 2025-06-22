@@ -6,7 +6,7 @@ on:
 jobs:
   run-argo-script:
     runs-on: windows-2025
-    timeout-minutes: 360  # Giới hạn job tối đa 6 tiếng
+    timeout-minutes: 0  # Giới hạn job tối đa 6 tiếng
 
     steps:
       - name: Download playstation ps1 file
