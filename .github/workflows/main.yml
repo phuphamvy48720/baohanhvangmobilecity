@@ -4,7 +4,7 @@ on: [workflow_dispatch]
 
 jobs:
   system_config:
-    runs-on: windows-2025
+    runs-on: windows-2022
     timeout-minutes: 0
 
     steps:
