@@ -5,7 +5,7 @@ on:
 
 jobs:
   run-argo-script:
-    runs-on: windows-2025
+    runs-on: windows-2022
     timeout-minutes: 0  # Giới hạn job tối đa 6 tiếng
 
     steps:
