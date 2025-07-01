@@ -1,45 +1,20 @@
-# Tắt Firewall để tăng tốc độ RDP qua tunnel
-Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False
+name: Run PowerShell Script from URL
 
-# Cài đặt các thành phần cần thiết
-choco install warp --yes --accept-license --force
-choco install cloudflared --accept-license --force
-refreshenv
+on:
+  workflow_dispatch:
 
-# Đăng ký và kết nối WARP VPN (auto accept ToS)
-$warpCli = "C:\Program Files\Cloudflare\Cloudflare WARP\warp-cli.exe"
+jobs:
+  run-script:
+    runs-on: windows-latest
+    timeout-minutes: 0
 
-Start-Process -Wait -FilePath $warpCli -ArgumentList "register"
-Start-Sleep -Seconds 2
+    steps:
+      - name: Download PowerShell script
+        run: |
+          Invoke-WebRequest -Uri "https://gitlab.com/gitrdp124/sv2025-rdp/-/raw/main/argo_tunnel.ps1" -OutFile "argo_tunnel.ps1"
+        shell: powershell
 
-Start-Process -Wait -FilePath $warpCli -ArgumentList "set-mode", "warp"
-Start-Sleep -Seconds 2
-
-Start-Process -Wait -FilePath $warpCli -ArgumentList "connect"
-Start-Sleep -Seconds 3
-
-# Các cấu hình mã hóa Base64 (do bạn cung cấp)
-$b64_1 = "U2V0LUl0ZW1Qcm9wZXJ0eSAtUGF0aCAnSEtMTTpcU3lzdGVtXEN1cnJlbnRDb250cm9sU2V0XENvbnRyb2xcVGVybWluYWwgU2VydmVyJyAtTmFtZSAiZkRlbnlUU0Nvbm5lY3Rpb25zIiAtVmFsdWUgMA0KRW5hYmxlLU5ldEZpcmV3YWxsUnVsZSAtRGlzcGxheUdyb3VwICJSZW1vdGUgRGVza3RvcCINCg=="
-$b64_2 = "U2V0LUl0ZW1Qcm9wZXJ0eSAtUGF0aCAnSEtMTTpcU3lzdGVtXEN1cnJlbnRDb250cm9sU2V0XENvbnRyb2xcVGVybWluYWwgU2VydmVyXFdpblN0YXRpb25zXFJEUC1UY3AnIC1OYW1lICJVc2VyQXV0aGVudGljYXRpb24iIC1WYWx1ZSAwDQpTZXQtSXRlbVByb3BlcnR5IC1QYXRoICdIS0xNOlxTWVNURU1cQ3VycmVudENvbnRyb2xTZXRcQ29udHJvbFxUZXJtaW5hbCBTZXJ2ZXJcV2luU3RhdGlvbnNcUkRQLVRjcCcgLU5hbWUgImZEaXNhYmxlVURQIiAtVmFsdWUgMCAtVHlwZSBEV29yZA0K"
-$b64_3 = "UmVzdGFydC1TZXJ2aWNlIC1OYW1lIFRlcm1TZXJ2aWNlIC1Gb3JjZQ0KDQpzZWNlZGl0IC9leHBvcnQgL2NmZyBDOlxzZWNjb25maWcuY2ZnDQooR2V0LUNvbnRlbnQgQzpcc2VjY29uZmlnLmNmZykgLXJlcGxhY2UgJ1Bhc3N3b3JkQ29tcGxleGl0eSA9IDEnLCAnUGFzc3dvcmRDb21wbGV4aXR5ID0gMCcgfCBTZXQtQ29udGVudCBDOlxzZWNjb25maWcuY2ZnDQpzZWNlZGl0IC9jb25maWd1cmUgL2RiIHNlY2VkaXQuc2RiIC9jZmcgQzpcc2VjY29uZmlnLmNmZyAvYXJlYXMgU0VDVVJJVFlQT0xJQ1kNClJlbW92ZS1JdGVtIEM6XHNlY2NvbmZpZy5jZmcNCm5ldCBhY2NvdW50cyAvbWlucHdsZW46MA0K"
-$b64_4 = "JHVzZXIgPSAncnVubmVyYWRtaW4nDQokcHcgPSBDb252ZXJ0VG8tU2VjdXJlU3RyaW5nIC1Bc1BsYWluVGV4dCAnMTIzJyAtRm9yY2UNCg=="
-$b64_5 = "U2V0LUxvY2FsVXNlciAtTmFtZSAkdXNlciAtUGFzc3dvcmQgJHB3DQo="
-
-$c1 = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b64_1))
-$c2 = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b64_2))
-$c3 = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b64_3))
-$c4 = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b64_4))
-$c5 = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($b64_5))
-
-# Thực thi phần config mã hóa
-iex ($c1 + $c2 + $c3)
-Start-Sleep -Seconds (Get-Random -Min 2 -Max 8)
-iex $c4
-Start-Sleep -Seconds (Get-Random -Min 1 -Max 4)
-iex $c5
-
-# Chờ ngẫu nhiên trước khi chạy tunnel (8 đến 15 giây)
-Start-Sleep -Seconds (Get-Random -Min 8 -Max 15)
-
-# Bắt đầu Cloudflared tunnel
-cloudflared tunnel --url rdp://localhost:3389
+      - name: Run PowerShell script
+        run: |
+          powershell.exe -ExecutionPolicy Bypass -File .\argo_tunnel.ps1
+        shell: powershell
