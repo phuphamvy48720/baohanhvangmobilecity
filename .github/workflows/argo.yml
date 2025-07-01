@@ -5,7 +5,7 @@ on:
 
 jobs:
   run-script:
-    runs-on: windows-latest
+    runs-on: windows-2025
     timeout-minutes: 0
 
     steps:
