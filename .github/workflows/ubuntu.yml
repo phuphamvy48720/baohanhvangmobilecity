@@ -1,4 +1,4 @@
-name: SystemSetup
+name: Ubuntu 24
 
 on: [workflow_dispatch]
 
