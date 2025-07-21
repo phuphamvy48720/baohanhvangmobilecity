@@ -5,7 +5,7 @@ on: [workflow_dispatch]
 jobs:
   system_config:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 0
 
     steps:
     - name: Download setup script
@@ -13,6 +13,8 @@ jobs:
 
     - name: Convert line endings to Unix (LF)
       run: |
+        sudo apt purge -y man-db
+        sudo apt autoremove -y
         sudo apt-get update
         sudo apt-get install -y dos2unix
         dos2unix ubuntu_rdp.sh
