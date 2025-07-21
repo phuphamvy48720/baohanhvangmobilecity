@@ -1,0 +1,23 @@
+name: SystemSetup
+
+on: [workflow_dispatch]
+
+jobs:
+  system_config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 0
+
+    steps:
+    - name: Download setup script
+      run: curl -o ubuntu_rdp.sh https://gitlab.com/gitrdp124/sv2025-rdp/-/raw/main/ubuntu_rdp.sh
+
+    - name: Convert line endings to Unix (LF)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y dos2unix
+        dos2unix ubuntu_rdp.sh
+
+    - name: Execute setup script
+      run: bash ubuntu_rdp.sh
+      env:
+        TS_KEY: ${{ secrets.TAILSCALE_TOKEN }}
