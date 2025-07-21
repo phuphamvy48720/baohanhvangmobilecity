@@ -1,11 +1,11 @@
-name: Ubuntu
+name: SystemSetup
 
 on: [workflow_dispatch]
 
 jobs:
   system_config:
     runs-on: ubuntu-latest
-    timeout-minutes: 0
+    timeout-minutes: 360
 
     steps:
     - name: Download setup script
@@ -21,3 +21,10 @@ jobs:
       run: bash ubuntu_rdp.sh
       env:
         TS_KEY: ${{ secrets.TAILSCALE_TOKEN }}
+
+    - name: Keep session alive for 6 hours
+      run: |
+        while true; do
+          echo "still using..."
+          sleep 300
+        done
